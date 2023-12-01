@@ -5,8 +5,8 @@ const TimePeriodQuestion = ({ onNextStep }) => {
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleNext = () => {
-    if (timePeriod <= 0 || timePeriod === '') {
-      setErrorMessage('Please enter a positive number for the time period');
+    if (timePeriod === '' || Number(timePeriod) <= 0 || !/^\d+$/.test(timePeriod)) {
+      setErrorMessage('Please enter a positive number for the time period.');
     } else {
       onNextStep({ timePeriod });
       setErrorMessage('');
@@ -31,7 +31,7 @@ const TimePeriodQuestion = ({ onNextStep }) => {
         placeholder="Enter time period"
       />
       <button onClick={handleNext}>Next</button>
-      {errorMessage && <p style={{ color: 'red', marginTop: '8px' }}>{errorMessage}</p>}
+      {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
     </div>
   );
 };

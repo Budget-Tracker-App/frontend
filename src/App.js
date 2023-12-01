@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import SalaryQuestion from './Components/SalaryQuestion';
-import SavingsGoalQuestion from './Components/SavingsGoalQuestion'; // Import the SavingsGoalQuestion component
-import TimePeriodQuestion from './Components/TimePeriodQuestion'; // Import the TimePeriodQuestion component
-import FixedExpenses from './Components/FixedExpenses'; // Import the FixedExpenses component
-import UserDescription from './Components/UserDescription'; 
+import SavingsGoalQuestion from './Components/SavingsGoalQuestion';
+import TimePeriodQuestion from './Components/TimePeriodQuestion';
+import FixedExpenses from './Components/FixedExpenses';
+import UserDescription from './Components/UserDescription';
 
 
 const DisplayUserData = ({ userData, expenses, description }) => {
@@ -21,9 +21,9 @@ const DisplayUserData = ({ userData, expenses, description }) => {
       </div>
       <div>
         <strong>Fixed Expenses:</strong>
-        {userData.expenses ? (
+        {expenses.length > 0 ? (
           <ul>
-            {userData.expenses.map((expense, index) => (
+            {expenses.map((expense, index) => (
               <li key={index}>
                 {expense.category}: {expense.amount}
               </li>
@@ -36,12 +36,9 @@ const DisplayUserData = ({ userData, expenses, description }) => {
       <div>
         <strong>Description:</strong> {description || 'N/A'}
       </div>
-      {/* Add more fields here */}
     </div>
   );
 };
-
-
 
 const App = () => {
   const [step, setStep] = useState(0);
@@ -51,6 +48,7 @@ const App = () => {
   const [salary, setSalary] = useState('');
   const [savingsGoal, setSavingsGoal] = useState('');
   const [timePeriod, setTimePeriod] = useState('');
+
 
   const handleNextStep = (data) => {
     setUserData({ ...userData, ...data });
@@ -66,7 +64,7 @@ const App = () => {
         setTimePeriod(data.timePeriod);
         break;
       case 3:
-        setUserData({ ...userData, expenses: data });
+        setExpenses(data);
         break;
       case 4:
         setDescription(data);
@@ -76,10 +74,32 @@ const App = () => {
     }
 
     setStep(step + 1);
+    console.log('Current step:', step + 1);
+
+
   };
 
   const handlePreviousStep = () => {
     setStep(step - 1);
+  };
+
+  const handleSubmit = () => {
+    console.log('Submit button clicked!');
+
+    // Constructing an object with the user data for API submission
+    const userDataForAPI = {
+      salary: salary,
+      savingsGoal: savingsGoal,
+      timePeriod: timePeriod,
+      expenses: expenses,
+      description: description,
+    };
+
+    // Logging the data formatted for API submission
+    console.log('User Data for API:', userDataForAPI);
+
+    // Assuming an API call would go here:
+    // sendToAPI(userDataForAPI);
   };
 
   const renderStep = () => {
@@ -107,6 +127,9 @@ const App = () => {
           {renderStep()}
           {step > 0 && (
             <button onClick={handlePreviousStep}>Go Back</button>
+          )}
+          {step === 5 && (
+            <button onClick={handleSubmit}>Submit</button>
           )}
         </div>
         <DisplayUserData userData={userData} expenses={expenses} description={description} />
