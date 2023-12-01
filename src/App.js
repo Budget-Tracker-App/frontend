@@ -7,7 +7,18 @@ import UserDescription from './Components/UserDescription';
 
 
 const DisplayUserData = ({ userData, expenses, description, result }) => {
-  const isFormSubmitted = Object.keys(userData).length > 0; // Check if form data is available
+  const isResultAvailable  = Object.keys(result).length > 0; // Check if form data is available
+
+  const renderFormattedResult = () => {
+    const formattedResult = result.replace(/(?:\r\n|\r|\n)/g, '<br>'); // Replace newlines with HTML line breaks
+    return { __html: formattedResult };
+  };
+
+  const displayResult = isResultAvailable ? (
+    <div dangerouslySetInnerHTML={renderFormattedResult()} />
+  ) : (
+    'N/A'
+  );
 
   return (
     <div className="userDataDisplay">
@@ -40,7 +51,7 @@ const DisplayUserData = ({ userData, expenses, description, result }) => {
       </div>
       <div>
         <h3>Budget Analysis</h3>
-        <p>{isFormSubmitted ? (result ? result : 'Loading...') : 'N/A'}</p>
+        <div>{displayResult}</div>
       </div>
     </div>
   );
@@ -55,6 +66,7 @@ const App = () => {
   const [savingsGoal, setSavingsGoal] = useState('');
   const [timePeriod, setTimePeriod] = useState('');
   const [resultData, setResultData] = useState('');
+  const [loading, setLoading] = useState(false); // Track loading state
 
 
   const handleNextStep = (data) => {
@@ -92,6 +104,8 @@ const App = () => {
 
 const handleSubmit = () => {
   console.log('Submit button clicked!');
+  setLoading(true); // Set loading state to true on submit
+
 
   setResultData('');
 
@@ -116,18 +130,26 @@ const handleSubmit = () => {
     body: JSON.stringify(userDataForAPI),
   })
     .then(response => {
+      setLoading(false); // Set loading state back to false after response received
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
       return response.json();
+      
     })
     .then(data => {
       // Handle the data received from the backend
-      console.log('Data from backend:', data);
-      setResultData(data.result); // Store the response in state
+      // const stringifiedData = JSON.stringify(data, null, 2);
+      // console.log('Data from backend:', stringifiedData);
+      // setResultData(stringifiedData); // Store the stringified response in state
 
+      const resultText = data.result.replace(/\n/g, '<br>'); // Replace newlines with HTML line breaks
+      console.log('Received data with appropriate line breaks:');
+      console.log(resultText);
+      setResultData(resultText); // Store the formatted response in state
     })
     .catch(error => {
+      setLoading(false); // Set loading state back to false on error
       // Handle errors that might occur during the fetch
       console.error('There was a problem with the fetch operation:', error);
     });
@@ -168,6 +190,8 @@ const handleSubmit = () => {
         userData={userData}
         expenses={expenses}
         description={description}
+
+        
         result={resultData} // Pass the result data to the component
         />
       </div>
