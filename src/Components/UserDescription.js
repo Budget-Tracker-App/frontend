@@ -10,13 +10,13 @@ const UserDescription = ({ onSubmit }) => {
 
   return (
     <div>
-      <h2>For better results, please describe your spending habits</h2>
+      <h2>For better results, please describe your spending habits:</h2>
       <textarea
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         placeholder="Enter a description"
       />
-      <button onClick={handleSubmit}>Submit</button>
+      {/* <button onClick={handleSubmit}>Submit</button> */}
     </div>
   );
 };

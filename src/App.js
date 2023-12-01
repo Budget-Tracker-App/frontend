@@ -6,7 +6,9 @@ import FixedExpenses from './Components/FixedExpenses';
 import UserDescription from './Components/UserDescription';
 
 
-const DisplayUserData = ({ userData, expenses, description }) => {
+const DisplayUserData = ({ userData, expenses, description, result }) => {
+  const isFormSubmitted = Object.keys(userData).length > 0; // Check if form data is available
+
   return (
     <div className="userDataDisplay">
       <h2>User Data Display</h2>
@@ -36,6 +38,10 @@ const DisplayUserData = ({ userData, expenses, description }) => {
       <div>
         <strong>Description:</strong> {description || 'N/A'}
       </div>
+      <div>
+        <h3>Budget Analysis</h3>
+        <p>{isFormSubmitted ? (result ? result : 'Loading...') : 'N/A'}</p>
+      </div>
     </div>
   );
 };
@@ -48,6 +54,7 @@ const App = () => {
   const [salary, setSalary] = useState('');
   const [savingsGoal, setSavingsGoal] = useState('');
   const [timePeriod, setTimePeriod] = useState('');
+  const [resultData, setResultData] = useState('');
 
 
   const handleNextStep = (data) => {
@@ -83,24 +90,49 @@ const App = () => {
     setStep(step - 1);
   };
 
-  const handleSubmit = () => {
-    console.log('Submit button clicked!');
+const handleSubmit = () => {
+  console.log('Submit button clicked!');
 
-    // Constructing an object with the user data for API submission
-    const userDataForAPI = {
-      salary: salary,
-      savingsGoal: savingsGoal,
-      timePeriod: timePeriod,
-      expenses: expenses,
-      description: description,
-    };
+  setResultData('');
 
-    // Logging the data formatted for API submission
-    console.log('User Data for API:', userDataForAPI);
-
-    // Assuming an API call would go here:
-    // sendToAPI(userDataForAPI);
+  // Constructing an object with the user data for API submission
+  const userDataForAPI = {
+    salary: salary,
+    savingsGoal: savingsGoal,
+    timePeriod: timePeriod,
+    expenses: expenses,
+    description: description,
   };
+
+  // Logging the data formatted for API submission
+  console.log('User Data for API:', userDataForAPI);
+
+  // Make a POST request to the backend API
+  fetch('http://localhost:3001/openai', { // Using the port 3001 for backend
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(userDataForAPI),
+  })
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.json();
+    })
+    .then(data => {
+      // Handle the data received from the backend
+      console.log('Data from backend:', data);
+      setResultData(data.result); // Store the response in state
+
+    })
+    .catch(error => {
+      // Handle errors that might occur during the fetch
+      console.error('There was a problem with the fetch operation:', error);
+    });
+};
+
 
   const renderStep = () => {
     switch (step) {
@@ -128,11 +160,16 @@ const App = () => {
           {step > 0 && (
             <button onClick={handlePreviousStep}>Go Back</button>
           )}
-          {step === 5 && (
+          {step === 4 && (
             <button onClick={handleSubmit}>Submit</button>
           )}
         </div>
-        <DisplayUserData userData={userData} expenses={expenses} description={description} />
+        <DisplayUserData
+        userData={userData}
+        expenses={expenses}
+        description={description}
+        result={resultData} // Pass the result data to the component
+        />
       </div>
     </div>
   );
