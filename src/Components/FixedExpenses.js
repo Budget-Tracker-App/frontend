@@ -41,7 +41,7 @@ const FixedExpenses = ({ onAddExpense }) => {
 
   return (
     <div>
-      <h2>Enter any Fixed Expenses during this period:</h2>
+      <h2>Enter any Fixed Expenses you plan to have during this period:</h2>
       {expenses.map((expense, index) => (
         <div key={index}>
           <input

@@ -47,7 +47,7 @@ const DisplayUserData = ({ userData, expenses, description, result, genImage}) =
         )}
       </div>
       <div>
-        <strong>Description:</strong> {description || 'N/A'}
+        <strong>Description:</strong> {userData.description || 'N/A'}
       </div>
       <div>
         <h3>Budget Analysis</h3>
@@ -78,6 +78,7 @@ const App = () => {
   const [resultData, setResultData] = useState('');
   const [imageData, setImageData] = useState('');
   const [loading, setLoading] = useState(false); // Track loading state
+  
 
 
   const handleNextStep = (data) => {
@@ -97,8 +98,9 @@ const App = () => {
         setExpenses(data);
         break;
       case 4:
-        setDescription(data);
-        break;
+        console.log("data.description", data.description)
+        setDescription(data.description || 'N/A');
+        break; 
       default:
         break;
     }
@@ -107,6 +109,10 @@ const App = () => {
     console.log('Current step:', step + 1);
 
 
+  };
+
+  const handleDescriptionSubmit = ({ description }) => {
+    handleNextStep({ description });
   };
 
   const handlePreviousStep = () => {
@@ -118,6 +124,10 @@ const App = () => {
     console.log('Submit button clicked!');
     setLoading(true); // Set loading state to true on submit
 
+      // Add logic to submit description when step is 4
+    if (step === 4) {
+      handleNextStep({ description });
+    }
 
     setResultData('');
 
@@ -224,7 +234,13 @@ const App = () => {
       case 3:
         return <FixedExpenses onAddExpense={handleNextStep} />;
       case 4:
-        return <UserDescription onSubmit={handleNextStep} />;
+        return (
+          <UserDescription
+            onSubmitDescription={handleDescriptionSubmit}
+            onSubmit={handleSubmit}
+          />
+        );
+
       default:
         return null;
     }
@@ -239,7 +255,7 @@ const App = () => {
           {step > 0 && (
             <button onClick={handlePreviousStep}>Go Back</button>
           )}
-          {step === 4 && (
+          {step === 5 && (
             <button onClick={handleSubmit}>Submit</button>
           )}
         </div>
