@@ -6,7 +6,7 @@ import FixedExpenses from './Components/FixedExpenses';
 import UserDescription from './Components/UserDescription';
 
 
-const DisplayUserData = ({ userData, expenses, description, result }) => {
+const DisplayUserData = ({ userData, expenses, description, result, genImage}) => {
   const isResultAvailable  = Object.keys(result).length > 0; // Check if form data is available
 
   const renderFormattedResult = () => {
@@ -53,6 +53,16 @@ const DisplayUserData = ({ userData, expenses, description, result }) => {
         <h3>Budget Analysis</h3>
         <div>{displayResult}</div>
       </div>
+      <div>
+        <h3>Images</h3>
+        <div>
+          {genImage ? (
+            <img src={genImage} alt={`Generated Image`} />
+          ) : (
+            <span>No image generated</span>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
@@ -66,6 +76,7 @@ const App = () => {
   const [savingsGoal, setSavingsGoal] = useState('');
   const [timePeriod, setTimePeriod] = useState('');
   const [resultData, setResultData] = useState('');
+  const [imageData, setImageData] = useState('');
   const [loading, setLoading] = useState(false); // Track loading state
 
 
@@ -102,58 +113,104 @@ const App = () => {
     setStep(step - 1);
   };
 
-const handleSubmit = () => {
-  console.log('Submit button clicked!');
-  setLoading(true); // Set loading state to true on submit
+  const handleSubmit = () => {
+
+    console.log('Submit button clicked!');
+    setLoading(true); // Set loading state to true on submit
 
 
-  setResultData('');
+    setResultData('');
 
-  // Constructing an object with the user data for API submission
-  const userDataForAPI = {
-    salary: salary,
-    savingsGoal: savingsGoal,
-    timePeriod: timePeriod,
-    expenses: expenses,
-    description: description,
-  };
+    // Constructing an object with the user data for API submission
+    const userDataForAPI = {
+      salary: salary,
+      savingsGoal: savingsGoal,
+      timePeriod: timePeriod,
+      expenses: expenses,
+      description: description,
+    };
 
-  // Logging the data formatted for API submission
-  console.log('User Data for API:', userDataForAPI);
+    // Logging the data formatted for API submission
+    console.log('User Data for API:', userDataForAPI);
 
-  // Make a POST request to the backend API
-  fetch('http://localhost:3001/openai', { // Using the port 3001 for backend
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(userDataForAPI),
-  })
+    // Make a POST request to the backend API for text response
+    fetch('http://localhost:3001/openai', { // Using the port 3001 for backend
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userDataForAPI),
+    })
+      .then(response => {
+        setLoading(false); // Set loading state back to false after response received
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+        
+      })
+      .then(data => {
+        // Handle the data received from the backend
+        // const stringifiedData = JSON.stringify(data, null, 2);
+        // console.log('Data from backend:', stringifiedData);
+        // setResultData(stringifiedData); // Store the stringified response in state
+
+        const resultText = data.result.replace(/\n/g, '<br>'); // Replace newlines with HTML line breaks
+        console.log('Received data with appropriate line breaks:');
+        console.log(resultText);
+        setResultData(resultText); // Store the formatted response in state
+      })
+      .catch(error => {
+        setLoading(false); // Set loading state back to false on error
+        // Handle errors that might occur during the fetch
+        console.error('There was a problem with the fetch operation:', error);
+      });
+
+
+
+    // For image response
+    fetch('http://localhost:3001/openai/image', { // Using the port 3001 for backend
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(userDataForAPI),
+    })
     .then(response => {
-      setLoading(false); // Set loading state back to false after response received
+      setLoading(false);
+  
+      // Check if the response is okay
       if (!response.ok) {
         throw new Error('Network response was not ok');
       }
+  
+      // Convert the response to JSON
       return response.json();
-      
     })
+    // Your existing code for the fetch call...
     .then(data => {
-      // Handle the data received from the backend
-      // const stringifiedData = JSON.stringify(data, null, 2);
-      // console.log('Data from backend:', stringifiedData);
-      // setResultData(stringifiedData); // Store the stringified response in state
+      setLoading(false); // Set loading state back to false after response received
 
-      const resultText = data.result.replace(/\n/g, '<br>'); // Replace newlines with HTML line breaks
-      console.log('Received data with appropriate line breaks:');
-      console.log(resultText);
-      setResultData(resultText); // Store the formatted response in state
+      // Check if the 'image_url' property exists in the received data
+      if (data && data.image_url) {
+        setImageData(data.image_url); // Set the image URL to state (setImageData is a state setter)
+      } else {
+        // If 'image_url' is not present or empty in the data received
+        setImageData('N/A'); // Set 'N/A' or an appropriate default value to signify no image generated
+      }
+
+      console.log(data.image_url);
+
+
     })
     .catch(error => {
       setLoading(false); // Set loading state back to false on error
       // Handle errors that might occur during the fetch
       console.error('There was a problem with the fetch operation:', error);
     });
-};
+
+
+  };
 
 
   const renderStep = () => {
@@ -193,6 +250,7 @@ const handleSubmit = () => {
 
         
         result={resultData} // Pass the result data to the component
+        genImage={imageData} // Pass genImage as a prop
         />
       </div>
     </div>
