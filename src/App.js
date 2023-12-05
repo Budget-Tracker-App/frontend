@@ -4,6 +4,11 @@ import SavingsGoalQuestion from './Components/SavingsGoalQuestion';
 import TimePeriodQuestion from './Components/TimePeriodQuestion';
 import FixedExpenses from './Components/FixedExpenses';
 import UserDescription from './Components/UserDescription';
+import { Link, Route, Routes, useLocation } from 'react-router-dom';
+import SavedPlans from './Components/SavedPlans';
+
+
+
 
 
 const DisplayUserData = ({ userData, expenses, description, result, genImage}) => {
@@ -78,6 +83,8 @@ const App = () => {
   const [resultData, setResultData] = useState('');
   const [imageData, setImageData] = useState('');
   const [loading, setLoading] = useState(false); // Track loading state
+  const location = useLocation();
+
   
 
 
@@ -223,6 +230,36 @@ const App = () => {
   };
 
 
+    // Function to save user data
+  const saveUserData = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/putData', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userData, // Include user data you want to save
+          expenses,
+          description,
+          resultData,
+          imageData,
+        }),
+      });
+      if (response.ok) {
+        // Handle success, display a message or update UI
+        console.log('User data saved successfully!');
+      } else {
+        // Handle error, show an error message or alert
+        console.error('Failed to save user data');
+      }
+    } catch (error) {
+      // Handle network errors or exceptions
+      console.error('Error saving user data:', error);
+    }
+  };
+
+
   const renderStep = () => {
     switch (step) {
       case 0:
@@ -245,32 +282,47 @@ const App = () => {
         return null;
     }
   };
+  
+  const NotFound = () => {
+    return <div>Page Not Found</div>;
+  };
 
   return (
     <div className="App">
       <h1>Budget Tracker</h1>
-      <div className="stepsContainer">
-        <div className="questionContainer">
-          {renderStep()}
-          {step > 0 && (
-            <button onClick={handlePreviousStep}>Go Back</button>
-          )}
-          {step === 5 && (
-            <button onClick={handleSubmit}>Submit</button>
-          )}
+      {/* Render the link only on the home page */}
+      {location.pathname === '/' && (
+        <div className="topRightButton">
+          <Link to="/saved-plans">View Saved Plans</Link>
+          <button onClick={saveUserData}>Save Current Plan</button>
         </div>
-        <DisplayUserData
-        userData={userData}
-        expenses={expenses}
-        description={description}
-
-        
-        result={resultData} // Pass the result data to the component
-        genImage={imageData} // Pass genImage as a prop
+      )}
+      <Routes>
+        <Route
+          path="/"
+          element={
+            <div className="stepsContainer">
+              <div className="questionContainer">
+                {renderStep()}
+                {step > 0 && <button onClick={handlePreviousStep}>Go Back</button>}
+                {step === 5 && <button onClick={handleSubmit}>Submit</button>}
+              </div>
+              <DisplayUserData
+                userData={userData}
+                expenses={expenses}
+                description={description}
+                result={resultData}
+                genImage={imageData}
+              />
+            </div>
+          }
         />
-      </div>
+        <Route path="/saved-plans" element={<SavedPlans />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </div>
   );
+
 };
 
 export default App;
