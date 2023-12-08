@@ -1,70 +1,78 @@
-# Getting Started with Create React App
+# Budget Prompter with OpenAI GPT-3.5 and DALL-E Image Integration
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Welcome to Budget Prompter! This web application assists users in managing their budgets by providing prompts, feedback using OpenAI's GPT-3.5, and generating relevant images through DALL-E.
 
-## Available Scripts
+## Overview
 
-In the project directory, you can run:
+Budget Prompter is a web-based application that offers users the ability to:
 
-### `npm start`
+- Answer budget-related prompts to receive personalized feedback.
+- Utilize OpenAI GPT-3.5 for text-based insights.
+- Generate relevant images through DALL-E integration.
+- Store and manage budget plans.
+- View and delete saved plans.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Installation and Setup
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Prerequisites
 
-### `npm test`
+- Node.js v20.10.0
+- NPM (version 10.2.4)
+- MongoDB (running on port 27017)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Frontend Setup
 
-### `npm run build`
+1. Clone the frontend repository:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+    ```bash
+    git clone https://github.com/your-username/budget-prompter-frontend.git
+    ```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+2. Navigate to the frontend directory:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+    ```bash
+    cd budget-prompter-frontend
+    ```
 
-### `npm run eject`
+3. Install dependencies:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+    ```bash
+    npm install
+    # OR using Yarn
+    yarn install
+    ```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+5. Start the frontend server:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+    ```bash
+    npm start
+    # OR using Yarn
+    yarn start
+    ```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+6. Access the frontend in your browser:
 
-## Learn More
+    ```
+    http://localhost:3000
+    ```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### Backend Setup
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+Follow similar steps for the backend setup in the corresponding repository.
 
-### Code Splitting
+## Usage
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+1. Upon accessing the frontend, users can interact with the budget prompts.
+2. Users receive personalized feedback utilizing GPT-3.5 and relevant images through DALL-E.
+3. The application provides options to store, view, and delete saved budget plans.
 
-### Analyzing the Bundle Size
+## Contributing
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+Thank you for considering contributing to Budget Prompter! Feel free to submit pull requests, report issues, or suggest improvements.
 
-### Making a Progressive Web App
+Please follow the guidelines specified in the CONTRIBUTING.md file.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
 
-### Advanced Configuration
+## Contact
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+For any queries or support regarding this project, feel free to contact [Siddharth Vijayasankar] at [sidvijay2004@gmail.com].
