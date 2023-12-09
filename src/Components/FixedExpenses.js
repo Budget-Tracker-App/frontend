@@ -31,7 +31,6 @@ const FixedExpenses = ({ onAddExpense }) => {
     if (!hasInvalidExpenses || expenses.length === 0) {
       const validExpenses = expenses.filter(expense => expense.category !== '' || expense.amount !== '');
       onAddExpense(validExpenses);
-      // Reset expenses to an empty array after submitting
       setExpenses([]);
       setErrorMessage('');
     } else {

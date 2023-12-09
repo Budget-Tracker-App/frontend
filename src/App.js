@@ -8,14 +8,11 @@ import { Link, Route, Routes, useLocation } from 'react-router-dom';
 import SavedPlans from './Components/SavedPlans';
 
 
-
-
-
 const DisplayUserData = ({ userData, expenses, description, result, genImage}) => {
-  const isResultAvailable  = Object.keys(result).length > 0; // Check if form data is available
+  const isResultAvailable  = Object.keys(result).length > 0; 
 
   const renderFormattedResult = () => {
-    const formattedResult = result.replace(/(?:\r\n|\r|\n)/g, '<br>'); // Replace newlines with HTML line breaks
+    const formattedResult = result.replace(/(?:\r\n|\r|\n)/g, '<br>'); 
     return { __html: formattedResult };
   };
 
@@ -82,11 +79,7 @@ const App = () => {
   const [timePeriod, setTimePeriod] = useState('');
   const [resultData, setResultData] = useState('');
   const [imageData, setImageData] = useState('');
-  const [loading, setLoading] = useState(false); // Track loading state
   const location = useLocation();
-
-  
-
 
   const handleNextStep = (data) => {
     setUserData({ ...userData, ...data });
@@ -105,7 +98,6 @@ const App = () => {
         setExpenses(data);
         break;
       case 4:
-        console.log("data.description", data.description)
         setDescription(data.description || 'N/A');
         break; 
       default:
@@ -113,9 +105,6 @@ const App = () => {
     }
 
     setStep(step + 1);
-    console.log('Current step:', step + 1);
-
-
   };
 
   const handleDescriptionSubmit = ({ description }) => {
@@ -128,17 +117,12 @@ const App = () => {
 
   const handleSubmit = () => {
 
-    console.log('Submit button clicked!');
-    setLoading(true); // Set loading state to true on submit
-
-      // Add logic to submit description when step is 4
     if (step === 4) {
       handleNextStep({ description });
     }
 
     setResultData('');
 
-    // Constructing an object with the user data for API submission
     const userDataForAPI = {
       salary: salary,
       savingsGoal: savingsGoal,
@@ -147,11 +131,7 @@ const App = () => {
       description: description,
     };
 
-    // Logging the data formatted for API submission
-    console.log('User Data for API:', userDataForAPI);
-
-    // Make a POST request to the backend API for text response
-    fetch('http://localhost:3001/openai', { // Using the port 3001 for backend
+    fetch('http://localhost:3001/openai', { 
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -159,7 +139,6 @@ const App = () => {
       body: JSON.stringify(userDataForAPI),
     })
       .then(response => {
-        setLoading(false); // Set loading state back to false after response received
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -167,70 +146,48 @@ const App = () => {
         
       })
       .then(data => {
-        // Handle the data received from the backend
-        // const stringifiedData = JSON.stringify(data, null, 2);
-        // console.log('Data from backend:', stringifiedData);
-        // setResultData(stringifiedData); // Store the stringified response in state
 
-        const resultText = data.result.replace(/\n/g, '<br>'); // Replace newlines with HTML line breaks
-        console.log('Received data with appropriate line breaks:');
-        console.log(resultText);
-        setResultData(resultText); // Store the formatted response in state
+        const resultText = data.result.replace(/\n/g, '<br>'); 
+        setResultData(resultText); 
       })
       .catch(error => {
-        setLoading(false); // Set loading state back to false on error
-        // Handle errors that might occur during the fetch
-        console.error('There was a problem with the fetch operation:', error);
+        console.error('There was a problem with the fetch operation for text:', error);
       });
 
 
-
-    // For image response
-    fetch('http://localhost:3001/openai/image', { // Using the port 3001 for backend
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(userDataForAPI),
+    fetch('http://localhost:3001/openai/image', { 
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(userDataForAPI),
     })
     .then(response => {
-      setLoading(false);
-  
-      // Check if the response is okay
-      if (!response.ok) {
-        throw new Error('Network response was not ok');
-      }
-  
-      // Convert the response to JSON
-      return response.json();
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    return response.json();
     })
-    // Your existing code for the fetch call...
     .then(data => {
-      setLoading(false); // Set loading state back to false after response received
 
-      // Check if the 'image_url' property exists in the received data
-      if (data && data.image_url) {
-        setImageData(data.image_url); // Set the image URL to state (setImageData is a state setter)
-      } else {
-        // If 'image_url' is not present or empty in the data received
-        setImageData('N/A'); // Set 'N/A' or an appropriate default value to signify no image generated
-      }
+    if (data && data.image_url) {
+      setImageData(data.image_url); 
+    } else {
+      setImageData('N/A'); 
+    }
 
-      console.log(data.image_url);
+    console.log(data.image_url);
 
 
     })
     .catch(error => {
-      setLoading(false); // Set loading state back to false on error
-      // Handle errors that might occur during the fetch
-      console.error('There was a problem with the fetch operation:', error);
+    console.error('There was a problem with the fetch operation:', error);
     });
-
 
   };
 
-
-    // Function to save user data
   const saveUserData = async () => {
     try {
       const response = await fetch('http://localhost:3001/putData', {
@@ -239,7 +196,7 @@ const App = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userData, // Include user data you want to save
+          userData,
           expenses,
           description,
           resultData,
@@ -247,14 +204,11 @@ const App = () => {
         }),
       });
       if (response.ok) {
-        // Handle success, display a message or update UI
         console.log('User data saved successfully!');
       } else {
-        // Handle error, show an error message or alert
         console.error('Failed to save user data');
       }
     } catch (error) {
-      // Handle network errors or exceptions
       console.error('Error saving user data:', error);
     }
   };
@@ -290,7 +244,6 @@ const App = () => {
   return (
     <div className="App">
       <h1>Budget Tracker</h1>
-      {/* Render the link only on the home page */}
       {location.pathname === '/' && (
         <div className="topRightButton">
           <Link to="/saved-plans">View Saved Plans</Link>

@@ -5,8 +5,8 @@ const SavingsGoalQuestion = ({ onNextStep, salaryValue }) => {
   const [errorMessage, setErrorMessage] = useState('');
 
   const handleNext = () => {
-    if (savings <= 0 || savings === '') {
-      setErrorMessage('Please enter a positive number for savings goal');
+    if (savings < 0 || savings === '') {
+      setErrorMessage('Please enter a non-negative number for savings goal');
     } else if (parseFloat(savings) > parseFloat(salaryValue)) {
       setErrorMessage('Savings goal should be less than or equal to your total salary');
     } else {
