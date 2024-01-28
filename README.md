@@ -45,7 +45,7 @@ The application follows a client-server architecture:
 1. Clone the frontend repository:
 
     ```bash
-    git clone https://github.com/your-username/budget-prompter-frontend.git
+    git clone https://github.com/Budget-Tracker-App/frontend.git
     ```
 
 2. Navigate to the frontend directory:
